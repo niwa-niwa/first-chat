@@ -1,8 +1,12 @@
 import Vue from 'vue'
 import App from './App.vue'
-import firebase from 'firebase'
+import firebase from 'firebase/app'
+import 'firebase/auth'
+import 'firebase/database'
+
 
 Vue.config.productionTip = false
+
 
 var firebaseConfig = {
   apiKey: "AIzaSyDEJx9KV9MG5C3ikuEBWEFgraM6IIXCHc8",
@@ -13,8 +17,9 @@ var firebaseConfig = {
   messagingSenderId: "667554443719",
   appId: "1:667554443719:web:d6e63ea7342ac002b429e2"
 };
+
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+  firebase.initializeApp(firebaseConfig);
 
 
 new Vue({
