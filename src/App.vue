@@ -89,7 +89,7 @@ export default {
     },
     doSend(){
       if (this.user.uid && this.input.length){
-        firebase.database().ref('message'),push({
+        firebase.database().ref('message').push({
           message: this.input,
           name: this.user.displayName,
           image: this.user.photoURL
