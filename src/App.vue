@@ -3,6 +3,8 @@
 
     <header class="header">
       <h1>Chat</h1>
+
+      <!-- confirm state of Authentication -->
       <div v-if="user.uid" key="login">
         [{{ user.displayName }}]
         <button type="button" @click="doLogout">
@@ -17,6 +19,7 @@
       </div>
     </header>
 
+    <!-- Chat body -->
     <transition-group name="chat" tag="div" class="list content">
       <section v-for="{key, name, image, message } in chat" :key="key" class="item">
         <div class="item-image">
@@ -31,6 +34,7 @@
       </section>
     </transition-group>
 
+    <!-- the section of send a message  -->
     <form action="" @submit.prevent="doSend" class="form">
       <textarea v-model="input" :disabled="!user.uid" @keydown.enter.exact.prevent="doSend"></textarea>
       <button type="submit" :disabled="!user.uid" class="send-button">Send</button>
@@ -54,32 +58,46 @@ export default {
     }
   },
   created() {
+
+    // confirm the user authenticated
     firebase.auth().onAuthStateChanged(user => {
+
+      // if the user authenticated this.user=user but not user={}
       this.user = user ? user : {}
       const ref_message = firebase.database().ref('message')
+
       if(user){
         this.chat = []
+        // invoke a handler(child_added) if new message existed 
         ref_message.limitToLast(10).on('child_added', this.childAdded)
+
       }else{
+        // revoke the handler that is invoked if user logouted 
         ref_message.limitToLast(10).off('child_added', this.childAdded)
+
       }
     })
-
-    console.log(this.user.id)
   },
   methods: {
+    // login method
     doLogin(){
       const provider = new firebase.auth.GoogleAuthProvider()
       firebase.auth().signInWithPopup(provider)
     },
+    
+    // logout method
     doLogout(){
       firebase.auth().signOut()
     },
+
+    // scroll to bottom automatically
     scrollBottom(){
       this.$nextTick(() => {
         window.scrollTo(0, document.body.clientHeight)
       })
     },
+  
+    // create a chat element when it was called by .on('child_added', this.childadded)
     childAdded(snap){
       const message = snap.val()
       this.chat.push({
@@ -90,6 +108,8 @@ export default {
       })
       this.scrollBottom()
     },
+  
+    // send new a message
     doSend(){
       if (this.user.uid && this.input.length){
         firebase.database().ref('message').push({
