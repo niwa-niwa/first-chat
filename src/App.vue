@@ -32,7 +32,7 @@
     </transition-group>
 
     <form action="" @submit.prevent="doSend" class="form">
-      <textarea v-model="input" :disabled="!user.id" @keydown.enter.exact.prevent="doSend"></textarea>
+      <textarea v-model="input" :disabled="!user.uid" @keydown.enter.exact.prevent="doSend"></textarea>
       <button type="submit" :disabled="!user.uid" class="send-button">Send</button>
     </form>
   </div>
@@ -40,8 +40,9 @@
 
 
 <script>
-import firebase from 'firebase'
+import firebase from 'firebase/app'
 import Nl2br from 'vue-nl2br'
+
 
 export default {
   components: { Nl2br },
@@ -53,7 +54,7 @@ export default {
     }
   },
   created() {
-    firebase.atth().onAuthStateChanged(user => {
+    firebase.auth().onAuthStateChanged(user => {
       this.user = user ? user : {}
       const ref_message = firebase.database().ref('message')
       if(user){
@@ -63,6 +64,8 @@ export default {
         ref_message.limitToLast(10).off('child_added', this.childAdded)
       }
     })
+
+    console.log(this.user.id)
   },
   methods: {
     doLogin(){
